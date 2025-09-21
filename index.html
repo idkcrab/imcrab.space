@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Banana Layout</title>
+    <title>imcrab fr fr</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/imcrab.png">
     <style>
         body {
             margin: 0;
@@ -113,18 +115,18 @@
 
     <script>
         const API_KEY = "AIzaSyBVXhoiLJAZwL_kCB4b0SzPJFAyDExdvBk";
-        const CHANNEL_ID = "UCm7nnuiCEq3VUiwFf45_fAQ";
+        const CHANNEL_ID = "UCvioLqKnp-cychVIYHgOG3Q";
 
         // Place bananas all down the page
         function createBananas() {
             const container = document.getElementById("banana-container");
-            const total = 30; // number of bananas
+            const total = 40; // more bananas
             for (let i = 0; i < total; i++) {
                 const banana = document.createElement("div");
                 banana.className = "banana";
 
                 // random position
-                banana.style.top = `${i * 120 + 100}px`; // vertical spacing
+                banana.style.top = `${i * 100 + 100}px`; // vertical spacing
                 banana.style.left = (Math.random() > 0.5)
                     ? `${5 + Math.random() * 10}%`
                     : `${80 + Math.random() * 10}%`;
