@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube Banana Layout</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            z-index: 10;
+            position: relative;
+        }
+
+            .header img {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                border: 3px solid gold;
+                margin-bottom: 10px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+                margin: 0;
+            }
+
+        /* Videos stacked vertically */
+        .videos {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .video-card {
+            width: 500px;
+            background: #222;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+        }
+
+            .video-card img {
+                width: 100%;
+                border-radius: 12px;
+                margin-bottom: 10px;
+            }
+
+            .video-card h2 {
+                font-size: 18px;
+                margin: 10px 0;
+            }
+
+            .video-card a {
+                display: inline-block;
+                padding: 8px 16px;
+                border-radius: 8px;
+                background: gold;
+                color: #111;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+        /* Banana shapes */
+        .banana {
+            position: absolute;
+            background: gold;
+            width: 70px;
+            height: 40px;
+            border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+            opacity: 0.8;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite alternate;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(-20deg);
+            }
+
+            100% {
+                transform: translateY(-20px) rotate(20deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img id="channel-pfp" src="" alt="Channel PFP">
+        <h1 id="channel-name">Loading...</h1>
+    </div>
+
+    <!-- Banana container -->
+    <div id="banana-container"></div>
+
+    <div class="videos" id="video-list"></div>
+
+    <script>
+        const API_KEY = "AIzaSyBVXhoiLJAZwL_kCB4b0SzPJFAyDExdvBk";
+        const CHANNEL_ID = "UCm7nnuiCEq3VUiwFf45_fAQ";
+
+        // Place bananas all down the page
+        function createBananas() {
+            const container = document.getElementById("banana-container");
+            const total = 30; // number of bananas
+            for (let i = 0; i < total; i++) {
+                const banana = document.createElement("div");
+                banana.className = "banana";
+
+                // random position
+                banana.style.top = `${i * 120 + 100}px`; // vertical spacing
+                banana.style.left = (Math.random() > 0.5)
+                    ? `${5 + Math.random() * 10}%`
+                    : `${80 + Math.random() * 10}%`;
+
+                // random delay for animation
+                banana.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(banana);
+            }
+        }
+
+        async function loadChannel() {
+            const channelRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${CHANNEL_ID}&key=${API_KEY}`);
+            const channelData = await channelRes.json();
+            const channel = channelData.items[0];
+
+            document.getElementById("channel-pfp").src = channel.snippet.thumbnails.high.url;
+            document.getElementById("channel-name").textContent = channel.snippet.title;
+
+            const videosRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet&order=date&maxResults=5`);
+            const videosData = await videosRes.json();
+
+            const videoList = document.getElementById("video-list");
+            videoList.innerHTML = "";
+
+            for (const item of videosData.items) {
+                if (item.id.kind === "youtube#video") {
+                    const videoId = item.id.videoId;
+                    const title = item.snippet.title;
+                    const thumb = item.snippet.thumbnails.high.url;
+
+                    const card = document.createElement("div");
+                    card.className = "video-card";
+                    card.innerHTML = `
+                <img src="${thumb}" alt="${title}">
+                <h2>${title}</h2>
+                <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">▶ Watch</a>
+              `;
+                    videoList.appendChild(card);
+                }
+            }
+        }
+
+        createBananas();
+        loadChannel();
+    </script>
+</body>
+</html>
